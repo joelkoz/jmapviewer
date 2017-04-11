@@ -1,0 +1,14 @@
+env:
+  global:
+  - FULL_CLONE_DIR="../full-josm-clone"
+  - secure: XSEOECLJV+gHbFwhEsfdKIn+FLxATCIzJUEXcl1m8nCEgQIBnVlshhepCzvZF0m+vTPUBb+/lNrrWq6wt/aRHCw4fQghZnbBPyuw29fgKlW5rBxxgKQS4gM2PP13u/6cAD8RvxZqqoUdupZF2f0IxZrYV+nW+nFoLAz0srIFIEM=
+  - secure: lWvNmPTKVP0cyMVjDSNhvd5wXclASORQu9iBDXN5vGvsuL4x0+UkwqHzANc/G3+ELaPHqYplBtysu9hOwXCk+ZXcx6RDrcFo9+gCyBmWsztEcZ8poQmqXvjQK8t7iiRvVqhUWnAKSXgQALic3sjNskwQUiFB4MatN41apn/nQlA=
+cache:
+  directories:
+  - "$FULL_CLONE_DIR"
+addons:
+  apt:
+    packages:
+    - git-svn
+    - subversion
+script: "./update.bash"
