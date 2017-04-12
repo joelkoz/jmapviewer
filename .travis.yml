@@ -1,0 +1,16 @@
+env:
+  global:
+  - secure: XSEOECLJV+gHbFwhEsfdKIn+FLxATCIzJUEXcl1m8nCEgQIBnVlshhepCzvZF0m+vTPUBb+/lNrrWq6wt/aRHCw4fQghZnbBPyuw29fgKlW5rBxxgKQS4gM2PP13u/6cAD8RvxZqqoUdupZF2f0IxZrYV+nW+nFoLAz0srIFIEM=
+  - secure: lWvNmPTKVP0cyMVjDSNhvd5wXclASORQu9iBDXN5vGvsuL4x0+UkwqHzANc/G3+ELaPHqYplBtysu9hOwXCk+ZXcx6RDrcFo9+gCyBmWsztEcZ8poQmqXvjQK8t7iiRvVqhUWnAKSXgQALic3sjNskwQUiFB4MatN41apn/nQlA=
+addons:
+  apt:
+    packages:
+    - git-svn
+language: java
+before_script:
+- "git clone --depth 1 --branch gh-pages https://github.com/floscher/jmapviewer.git ../gh-pages"
+- "mkdir -p ../gh-pages/maven"
+- "mkdir -p build"
+- "ln -s ../../gh-pages/maven build/maven"
+script: "./gradlew build uploadArchives"
+after_success: '.travis/after_success.bash'

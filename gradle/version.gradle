@@ -1,0 +1,59 @@
+ext.getVersionName = { ->
+  def gitVersionStream = new ByteArrayOutputStream()
+  exec {
+    commandLine 'git', 'describe', '--always', '--dirty'
+    standardOutput = gitVersionStream
+  }
+  return getSvnVersion() + gitVersionStream.toString().trim()
+}
+
+ext.getReleaseName = { ->
+  try {
+    def stream1 = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'diff-index', 'HEAD'
+      standardOutput = stream1
+    }
+    if (stream1.toString().trim().length() <= 0) {
+      return null
+    }
+    def stream2 = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'tag', '--points-at', 'HEAD'
+      standardOutput = stream2
+    }
+    def result = stream2.toString()
+    return result == null || result.length() <= 0 ? null : result
+  } catch (Exception e) {
+    return null
+  }
+}
+
+ext.getSvnVersion = { ->
+  return getSvnVersionRecurse('HEAD', 0)
+}
+
+def getSvnVersionRecurse(gitCommitish, depth) {
+  println "Find SVN revision (at $gitCommitish, $depth)"
+  def stream = new ByteArrayOutputStream()
+  def exitValue = 0
+  try {
+    exec {
+      commandLine 'git', 'svn', 'find-rev', gitCommitish
+      standardOutput = stream
+    }
+  } catch (Exception e) {
+    return null
+  }
+  def result = stream.toString().trim()
+  if ("".equals(result)) {
+    for (def i = 1; result != null; i++) {
+      result = getSvnVersionRecurse(gitCommitish + "^" + i, depth + 1)
+      if (result != null && !"".equals(result)) {
+        return result
+      }
+    }
+    return null
+  }
+  return 'r' + stream.toString().trim() + (depth > 0 ? '-' + depth : '') + '-'
+}

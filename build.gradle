@@ -1,0 +1,128 @@
+apply plugin: 'eclipse'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility='1.5'
+
+sourceSets {
+  main {
+    java {
+      srcDirs = ['src']
+      exclude '**/Demo.java'
+      exclude '**/*.png'
+    }
+    resources {
+      srcDirs = ['src']
+      exclude '**/*.java'
+    }
+  }
+  demo {
+    java {
+      srcDirs = ['src']
+      include '**/Demo.java'
+    }
+  }
+}
+
+apply from: 'gradle/version.gradle'
+
+group = 'org.openstreetmap'
+version = getVersionName()
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  demoCompile sourceSets.main.output
+}
+
+task run(type: JavaExec) {
+  classpath = sourceSets.demo.runtimeClasspath
+  main = 'org.openstreetmap.gui.jmapviewer.Demo'
+}
+
+ext.sharedManifest = manifest {
+  attributes(
+    'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')'
+  )
+}
+
+jar {
+  manifest {
+    from sharedManifest
+  }
+}
+
+task demoJar(type: Jar, dependsOn: classes) {
+  baseName = 'jmapviewer-demo'
+  manifest {
+    from sharedManifest
+    attributes(
+      'Main-Class': 'org.openstreetmap.gui.jmapviewer.Demo'
+    )
+  }
+  from sourceSets.main.output
+  from sourceSets.demo.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  manifest {
+    from sharedManifest
+  }
+  from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+  classifier = 'javadoc'
+  manifest {
+    from sharedManifest
+  }
+  from javadoc.destinationDir
+}
+
+artifacts {
+  archives demoJar
+  archives sourcesJar
+  archives javadocJar
+}
+
+/**
+ * Puts the artifacts into the Maven repository 'all' inside the build directory,
+ * if the current commit does not have a git-tag pointed at it.
+ */
+task uploadArchives2(type: Upload) {
+  configuration = configurations.archives
+  repositories {
+    mavenDeployer {
+      repository(url: "file://$buildDir/maven/all")
+      def releaseName = getReleaseName()
+      addFilter('demo') { artifact, file -> releaseName == null && artifact.name == "${project.name}-demo" }
+      addFilter(project.name) { artifact, file -> releaseName == null && artifact.name == project.name }
+    }
+  }
+}
+
+/**
+ * Puts the artifacts into the Maven repository 'releases' inside the build directory,
+ * if the current commit has a git-tag pointed at it and the index is clean
+ */
+uploadArchives {
+  dependsOn uploadArchives2
+  repositories {
+    mavenDeployer {
+      repository(url: "file://$buildDir/maven/releases")
+
+      def releaseName = getReleaseName()
+      // Trim leading 'v' character if present
+      releaseName = releaseName == null || releaseName.length() <= 1 || releaseName.charAt(0) != 'v' ? releaseName : releaseName.substring(1)
+
+      addFilter('demo') { artifact, file -> releaseName != null && artifact.name == "${project.name}-demo" }
+      pom('demo').version = releaseName
+
+      addFilter(project.name) { artifact, file -> releaseName != null && artifact.name == project.name }
+      pom(project.name).version = releaseName
+    }
+  }
+}
