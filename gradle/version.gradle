@@ -30,24 +30,27 @@ ext.getReleaseName = { ->
 }
 
 ext.getSvnVersion = { ->
-  return getSvnVersionRecurse('HEAD', 0)
+  def version = getSvnVersionRecurse('HEAD', 0)
+  println "Found SVN version $version"
+  return version
 }
 
 def getSvnVersionRecurse(gitCommitish, depth) {
   println "Find SVN revision (at $gitCommitish, $depth)"
   def stream = new ByteArrayOutputStream()
-  def exitValue = 0
   try {
     exec {
       commandLine 'git', 'svn', 'find-rev', gitCommitish
       standardOutput = stream
+      errorOutput = new ByteArrayOutputStream()
     }
   } catch (Exception e) {
     return null
   }
   def result = stream.toString().trim()
   if ("".equals(result)) {
-    for (def i = 1; result != null; i++) {
+    result = null
+    for (def i = 4; i > 0 && result == null; i--) {
       result = getSvnVersionRecurse(gitCommitish + "^" + i, depth + 1)
       if (result != null && !"".equals(result)) {
         return result
