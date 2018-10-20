@@ -1,6 +1,22 @@
+import com.github.spotbugs.SpotBugsTask
+import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+
+buildscript {
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath("org.eclipse.jgit:org.eclipse.jgit:5.1.2.201810061102-r")
+  }
+}
+
 plugins {
+  checkstyle
   java
   `maven-publish`
+  id("com.github.ben-manes.versions") version "0.20.0"
+  id("com.github.spotbugs") version "1.6.5"
 }
 
 repositories {
@@ -13,8 +29,12 @@ dependencies {
   testImplementation("org.junit.vintage:junit-vintage-engine:${Versions.junit}")
 }
 
+version = generateVersion()
+group = "org.openstreetmap.josm"
+
 object Versions {
   val junit = "5.3.1"
+  val spotbugs = "3.1.8"
 }
 val demoClass = "org.openstreetmap.gui.jmapviewer.Demo"
 val demoClassFilePattern = demoClass.replace('.', '/').plus(".java")
@@ -86,12 +106,41 @@ publishing {
   }
   publications {
     create("maven", MavenPublication::class) {
-      groupId = "org.openstreetmap.josm"
-      artifactId = "jmapviewer"
-      version = "1.0.0"
+      project.afterEvaluate {
+        groupId = project.group.toString()
+        artifactId = "jmapviewer"
+        version = project.version.toString()
+      }
       from(components.getByName("java"))
       artifact(sourcesJar)
       artifact(javadocJar)
     }
   }
+}
+
+checkstyle {
+  toolVersion = "8.13"
+  this.config = resources.text.fromFile(project.file("tools/checkstyle/jmapviewer_checks.xml"))
+}
+
+spotbugs {
+  toolVersion = Versions.spotbugs
+  isIgnoreFailures = true
+  sourceSets = setOf(project.sourceSets.getByName("main"))
+  effort = "max"
+}
+tasks.withType(SpotBugsTask::class) {
+  reports {
+    xml.isEnabled = false
+    html.isEnabled = true
+  }
+}
+
+fun generateVersion(): String {
+  val git = Git(FileRepositoryBuilder().setWorkTree(projectDir).readEnvironment().findGitDir().build())
+  val describe = git.describe().call()
+  return describe ?:
+    git.repository.newObjectReader().abbreviate(
+      git.log().setMaxCount(1).call().first().toObjectId()
+    ).name()
 }
