@@ -106,6 +106,7 @@ public class OsmTileLoader implements TileLoader {
 
     public OsmTileLoader(TileLoaderListener listener, Map<String, String> headers) {
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
+        this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
         if (headers != null) {
             this.headers.putAll(headers);
         }
@@ -117,6 +118,7 @@ public class OsmTileLoader implements TileLoader {
         return new OsmTileJob(tile);
     }
 
+    
     protected URLConnection loadTileFromOsm(Tile tile) throws IOException {
         URL url;
         url = new URL(tile.getUrl());
