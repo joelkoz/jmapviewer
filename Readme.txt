@@ -1,3 +1,16 @@
+This is a fork of the JMapViewer project originally located at https://github.com/floscher/jmapviewer.
+That project was synchronizing with the original SVN repository until the SVN repository was
+deprecated by OSM.org.  The last commit made via the SVN sync was Oct 6, 2018.
+
+This fork was originally made on May 13, 2020 and thus contains all known changes to the original 
+SVN version.  
+
+You may also be interested in the JXMapViewer2 project, which was forked from the SVN repository
+around 2009 and prior to SVN deprecation. It it is an active project.  https://github.com/msteiger/jxmapviewer2
+
+
+Original Readme.txt here --------------
+
 JMapViewer
 
 (c) 2007, Tim Haussmann
