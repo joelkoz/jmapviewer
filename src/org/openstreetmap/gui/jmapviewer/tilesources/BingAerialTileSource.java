@@ -30,6 +30,7 @@ import javax.xml.xpath.XPathFactory;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -79,8 +80,9 @@ public class BingAerialTileSource extends TMSTileSource {
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         // make sure that attribution is loaded. otherwise subdomains is null.
-        if (getAttribution() == null)
+        if (getAttribution() == null) {
             throw new IOException("Attribution is not loaded yet");
+        }
 
         int t = (zoom + tilex + tiley) % subdomains.length;
         String subdomain = subdomains[t];
@@ -249,6 +251,11 @@ public class BingAerialTileSource extends TMSTileSource {
         };
     }
 
+    public TileSource init() {
+        this.getAttribution();
+        return this;
+    }
+    
     protected List<Attribution> getAttribution() {
         if (attributions == null) {
             // see http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
@@ -263,7 +270,7 @@ public class BingAerialTileSource extends TMSTileSource {
         try {
             return attributions.get(0, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ex) {
-            System.err.println("Bing: attribution data is not yet loaded.");
+            System.err.println("Bing: attribution data retrieval timed out.");
         } catch (ExecutionException ex) {
             throw new RuntimeException(ex.getCause());
         } catch (InterruptedException ign) {
