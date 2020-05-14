@@ -37,4 +37,13 @@ public interface TileLoader {
         // default implementation supplied just to make transition easier for external implementors
         throw new UnsupportedOperationException("Not implemented");
     }
+    
+    
+    /**
+     * Returns the maximum number of times the tile controller should attempt to reload a tile if
+     * an error occurred on the previous try. If the load count for a tile exceeds this number, the
+     * controller will stop requesting the tile be loaded.
+     */
+    int getMaxLoadRetries();
+    
 }

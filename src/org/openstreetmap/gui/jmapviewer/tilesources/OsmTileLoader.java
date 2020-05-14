@@ -177,4 +177,10 @@ public class OsmTileLoader extends AbstractTileLoader {
             urlConn.setReadTimeout(timeoutRead);
     }
 
+    
+    @Override
+    public int getMaxLoadRetries() {
+        return 2;
+    }
+
 }
