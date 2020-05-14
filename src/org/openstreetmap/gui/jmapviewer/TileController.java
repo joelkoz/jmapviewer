@@ -49,7 +49,7 @@ public class TileController {
             tileCache.addTile(tile);
             tile.loadPlaceholderFromCache(tileCache);
         }
-        if (tile.error) {
+        if (tile.hasError()) {
             tile.loadPlaceholderFromCache(tileCache);
         }
         if (!tile.isLoaded()) {

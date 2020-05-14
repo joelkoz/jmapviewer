@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM.
@@ -16,6 +17,13 @@ public abstract class AbstractTileLoader implements TileLoader {
 
     protected static final ThreadPoolExecutor jobDispatcher = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
 
+    protected TileLoaderListener listener;
+
+    public AbstractTileLoader(TileLoaderListener listener) {
+        this.listener = listener;
+    }
+  
+    
     @Override
     public String toString() {
         return getClass().getSimpleName();

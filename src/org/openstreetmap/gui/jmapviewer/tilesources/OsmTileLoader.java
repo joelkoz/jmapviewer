@@ -36,12 +36,13 @@ public class OsmTileLoader extends AbstractTileLoader {
         @Override
         public void run() {
             synchronized (tile) {
+                
                 if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
                     return;
-                tile.loaded = false;
-                tile.error = false;
-                tile.loading = true;
+                
+                tile.initLoading();
             }
+            boolean success = false;
             try {
                 URLConnection conn = loadTileFromOsm(tile);
                 if (force) {
@@ -59,11 +60,9 @@ public class OsmTileLoader extends AbstractTileLoader {
                         input = null;
                     }
                 }
-                tile.setLoaded(true);
-                listener.tileLoadingFinished(tile, true);
+                success = true;
             } catch (IOException e) {
                 tile.setError(e.getMessage());
-                listener.tileLoadingFinished(tile, false);
                 if (input == null) {
                     try {
                         System.err.println("Failed loading " + getTileUrl(tile) +": "
@@ -73,8 +72,8 @@ public class OsmTileLoader extends AbstractTileLoader {
                     }
                 }
             } finally {
-                tile.loading = false;
-                tile.setLoaded(true);
+                tile.finishLoading();
+                listener.tileLoadingFinished(tile, success);
             }
         }
 
@@ -98,7 +97,6 @@ public class OsmTileLoader extends AbstractTileLoader {
     public int timeoutConnect;
     public int timeoutRead;
 
-    protected TileLoaderListener listener;
     protected AbstractMapService mapService;
 
     public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener) {
@@ -106,12 +104,12 @@ public class OsmTileLoader extends AbstractTileLoader {
     }
 
     public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
+        super(listener);
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
         if (headers != null) {
             this.headers.putAll(headers);
         }
-        this.listener = listener;
         this.mapService = mapService;
     }
 

@@ -37,9 +37,9 @@ public class Tile {
 
     
     // field accessed by multiple threads without any monitors, needs to be volatile
-    public volatile boolean loaded; 
-    public volatile boolean loading;
-    public volatile boolean error;
+    private volatile boolean loaded; 
+    private volatile boolean loading;
+    private volatile boolean error;
     
     protected TileSource source;
     protected int xtile;
@@ -429,6 +429,7 @@ public class Tile {
      */
     public void initLoading() {
         error = false;
+        loaded = false;        
         loading = true;
     }
 
@@ -440,6 +441,7 @@ public class Tile {
         loaded = true;
     }
 
+    
     /**
      *
      * @return TileSource from which this tile comes
