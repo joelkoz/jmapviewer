@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
@@ -22,7 +20,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * @author Wiktor Niesiobędzki
  *
  */
-public abstract class AbstractOnlineTMSTileSource extends AbstractMercatorTileSource {
+public abstract class AbstractMapService extends AbstractMercatorTileSource {
 
     protected String baseUrl;
     private final Map<String, Set<String>> noTileHeaders;
@@ -37,7 +35,7 @@ public abstract class AbstractOnlineTMSTileSource extends AbstractMercatorTileSo
      *
      * @param info description of the Tile Source
      */
-    public AbstractOnlineTMSTileSource(TileSourceInfo info) {
+    public AbstractMapService(MapServiceInfo info) {
         super(info.getName(), info.getUrl());
         this.baseUrl = info.getUrl();
         if (baseUrl != null && baseUrl.endsWith("/")) {
@@ -171,9 +169,4 @@ public abstract class AbstractOnlineTMSTileSource extends AbstractMercatorTileSo
         return new OsmTileLoader(listener);
     }
 
-    @Override
-    public TileCache getTileCache() {
-        return new MemoryTileCache();
-    }
-    
 }

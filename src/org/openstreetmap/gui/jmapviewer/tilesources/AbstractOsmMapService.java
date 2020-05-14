@@ -8,7 +8,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 /**
  * Abstract class for OSM Tile sources
  */
-public abstract class AbstractOsmTileSource extends AbstractOnlineTMSTileSource {
+public abstract class AbstractOsmMapService extends AbstractMapService {
 
     /**
      * The OSM attribution. Must be always in line with
@@ -23,8 +23,8 @@ public abstract class AbstractOsmTileSource extends AbstractOnlineTMSTileSource 
      * @param id unique id for the tile source; contains only characters that
      * are safe for file names; can be null
      */
-    public AbstractOsmTileSource(String name, String baseUrl, String id) {
-        super(new TileSourceInfo(name, baseUrl, id));
+    public AbstractOsmMapService(String name, String baseUrl, String id) {
+        super(new MapServiceInfo(name, baseUrl, id));
     }
 
     @Override

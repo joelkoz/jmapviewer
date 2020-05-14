@@ -9,7 +9,7 @@ import java.util.Set;
  *
  * @since 31122
  */
-public class TileSourceInfo {
+public class MapServiceInfo {
     /** id for this imagery entry, optional at the moment */
     protected String id;
 
@@ -50,7 +50,7 @@ public class TileSourceInfo {
      * @param baseUrl base URL
      * @param id unique id
      */
-    public TileSourceInfo(String name, String baseUrl, String id) {
+    public MapServiceInfo(String name, String baseUrl, String id) {
         this.name = name;
         this.url = baseUrl;
         this.id = id;
@@ -61,14 +61,14 @@ public class TileSourceInfo {
      *
      * @param name name
      */
-    public TileSourceInfo(String name) {
+    public MapServiceInfo(String name) {
         this(name, null, null);
     }
 
     /**
      * Creates empty TileSourceInfo class
      */
-    public TileSourceInfo() {
+    public MapServiceInfo() {
         this(null, null, null);
     }
 

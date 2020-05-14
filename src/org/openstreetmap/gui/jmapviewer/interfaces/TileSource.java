@@ -28,13 +28,6 @@ public interface TileSource extends Attributed {
     
     
     /**
-     * Returns a tile cache capable of managing tiles loaded at least once
-     * from the tile loader.
-     */
-    TileCache getTileCache();
-    
-    
-    /**
      * Specifies the maximum zoom value. The number of zoom levels is [0..
      * {@link #getMaxZoom()}].
      *

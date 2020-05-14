@@ -23,8 +23,9 @@ public class TileController {
      * @param tileSource The initial source to load tiles from
      * @param listener The listener to be notified when tiles have been loaded.
      */
-    public TileController(TileSource tileSource, TileLoaderListener listener) {
+    public TileController(TileSource tileSource, TileCache tileCache, TileLoaderListener listener) {
         this.listener = listener;
+        this.tileCache = tileCache;
         this.setTileSource(tileSource);
     }
 
@@ -57,6 +58,13 @@ public class TileController {
         return tile;
     }
 
+    public TileCache getTileCache() {
+        return tileCache;
+    }
+
+    public void setTileCache(TileCache tileCache) {
+        this.tileCache = tileCache;
+    }
     
     public TileSource getTileSource() {
         return tileSource;
@@ -65,7 +73,6 @@ public class TileController {
     public void setTileSource(TileSource tileSource) {
         this.tileSource = tileSource;
         this.tileLoader = tileSource.getTileLoader(this.listener);
-        this.tileCache = tileSource.getTileCache();
     }
 
     

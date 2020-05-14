@@ -116,7 +116,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * retrieving the tiles.
      */
     public JMapViewer() {
-        this(true);
+        this(new MemoryTileCache(), true);
     }
 
     
@@ -124,9 +124,9 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Creates a new {@link JMapViewer} instance.
      */
     @SuppressWarnings("unused")
-    public JMapViewer(boolean useDefaultMapController) {
+    public JMapViewer(TileCache tileCache, boolean useDefaultMapController) {
         tileSource = new OsmTileSource.Mapnik();
-        tileController = new TileController(tileSource, this);
+        tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = Collections.synchronizedList(new ArrayList<MapMarker>());
         mapPolygonList = Collections.synchronizedList(new ArrayList<MapPolygon>());
         mapRectangleList = Collections.synchronizedList(new ArrayList<MapRectangle>());

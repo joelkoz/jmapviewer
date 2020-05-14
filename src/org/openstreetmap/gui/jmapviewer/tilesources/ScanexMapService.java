@@ -22,7 +22,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
  *
  * TODO: correct getDistance() method.
  */
-public class ScanexTileSource extends AbstractOnlineTMSTileSource {
+public class ScanexMapService extends AbstractMapService {
     private static final String DEFAULT_URL = "http://maps.kosmosnimki.ru";
     private static final int DEFAULT_MAXZOOM = 14;
     private static final String API_KEY = "4018C5A9AECAD8868ED5DEB2E41D09F7";
@@ -50,7 +50,7 @@ public class ScanexTileSource extends AbstractOnlineTMSTileSource {
 
     /** IRS by default */
     private ScanexLayer layer = ScanexLayer.IRS;
-    private TemplatedTMSTileSource TemplateSource = null;
+    private TemplatedMapService TemplateSource = null;
 
     /** cached latitude used in {@link #tileYToLat(double, int)} */
     private double cachedLat;
@@ -59,7 +59,7 @@ public class ScanexTileSource extends AbstractOnlineTMSTileSource {
      * Constructs a new {@code ScanexTileSource}.
      * @param info tile source info
      */
-    public ScanexTileSource(TileSourceInfo info) {
+    public ScanexMapService(MapServiceInfo info) {
         super(info);
         String url = info.getUrl();
 
@@ -83,8 +83,8 @@ public class ScanexTileSource extends AbstractOnlineTMSTileSource {
             }
         }
         /** If not "irs" or "spot" keyword, then a custom URL. */
-        TemplatedTMSTileSource.checkUrl(info.getUrl());
-        this.TemplateSource = new TemplatedTMSTileSource(info);
+        TemplatedMapService.checkUrl(info.getUrl());
+        this.TemplateSource = new TemplatedMapService(info);
     }
 
     @Override
