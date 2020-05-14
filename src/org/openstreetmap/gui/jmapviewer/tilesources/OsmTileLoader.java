@@ -9,8 +9,6 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -22,10 +20,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
  * A {@link TileLoader} implementation that loads tiles from OSM.
  *
  * @author Jan Peter Stotz
+ * @author Joel Kozikowski
  */
-public class OsmTileLoader implements TileLoader {
-    private static final ThreadPoolExecutor jobDispatcher = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
-
+public class OsmTileLoader extends AbstractTileLoader {
+    
     private final class OsmTileJob implements TileJob {
         private final Tile tile;
         private InputStream input;
@@ -181,26 +179,4 @@ public class OsmTileLoader implements TileLoader {
             urlConn.setReadTimeout(timeoutRead);
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
-    public boolean hasOutstandingTasks() {
-        return jobDispatcher.getTaskCount() > jobDispatcher.getCompletedTaskCount();
-    }
-
-    @Override
-    public void cancelOutstandingTasks() {
-        jobDispatcher.getQueue().clear();
-    }
-
-    /**
-     * Sets the maximum number of concurrent connections the tile loader will do
-     * @param num number of concurrent connections
-     */
-    public static void setConcurrentConnections(int num) {
-        jobDispatcher.setMaximumPoolSize(num);
-    }
 }
