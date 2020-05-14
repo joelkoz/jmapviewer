@@ -103,16 +103,17 @@ public class OsmTileLoader implements TileLoader {
     protected AbstractMapService mapService;
 
     public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener) {
-        this(listener, null);
+        this(mapService, listener, null);
     }
 
-    public OsmTileLoader(TileLoaderListener listener, Map<String, String> headers) {
+    public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
         if (headers != null) {
             this.headers.putAll(headers);
         }
         this.listener = listener;
+        this.mapService = mapService;
     }
 
     @Override
