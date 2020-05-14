@@ -199,14 +199,6 @@ public interface TileSource extends Attributed {
     boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
 
     /**
-     * Extracts metadata about the tile based on HTTP headers
-     *
-     * @param headers HTTP headers from Tile Source server
-     * @return tile metadata
-     */
-    Map<String, String> getMetadata(Map<String, List<String>> headers);
-
-    /**
      * Convert tile indices (x/y/zoom) into projected coordinates of the tile origin.
      * @param x x tile index
      * @param y z tile index

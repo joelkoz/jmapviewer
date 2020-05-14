@@ -135,7 +135,13 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
         return super.isNoTileAtZoom(headers, statusCode, content);
     }
 
-    @Override
+    
+   /**
+    * Extracts metadata about the tile based on HTTP headers
+    *
+    * @param headers HTTP headers from Tile Source server
+    * @return tile metadata
+    */
     public Map<String, String> getMetadata(Map<String, List<String>> headers) {
         Map<String, String> ret = new HashMap<>();
         if (metadataHeaders != null && headers != null) {
@@ -151,7 +157,7 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
         return ret;
     }
 
-
+    
     @Override
     public boolean isModTileFeatures() {
         return modTileFeatures;
