@@ -30,7 +30,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;

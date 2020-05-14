@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialMapService;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
