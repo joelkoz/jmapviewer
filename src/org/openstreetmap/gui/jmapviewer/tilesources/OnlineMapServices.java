@@ -8,7 +8,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 /**
  * OSM Tile source.
  */
-public class OsmTileSource {
+public class OnlineMapServices {
 
     /**
      * The default "Mapnik" OSM tile source.

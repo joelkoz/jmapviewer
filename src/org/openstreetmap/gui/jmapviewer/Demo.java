@@ -23,7 +23,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialMapService;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.OnlineMapServices;
 
 /**
  * Demonstrates the usage of {@link JMapViewer}
@@ -85,8 +85,8 @@ public class Demo extends JFrame implements JMapViewerEventListener {
             }
         });
         JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] {
-                new OsmTileSource.Mapnik(),
-                new OsmTileSource.CycleMap(),
+                new OnlineMapServices.Mapnik(),
+                new OnlineMapServices.CycleMap(),
                 new BingAerialMapService(),
         });
         tileSourceSelector.addItemListener(new ItemListener() {

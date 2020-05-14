@@ -32,7 +32,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.OnlineMapServices;
 
 /**
  * Provides a simple panel that displays pre-rendered map tiles loaded from the
@@ -124,7 +124,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      */
     @SuppressWarnings("unused")
     public JMapViewer(TileCache tileCache, boolean useDefaultMapController) {
-        tileSource = new OsmTileSource.Mapnik();
+        tileSource = new OnlineMapServices.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = Collections.synchronizedList(new ArrayList<MapMarker>());
         mapPolygonList = Collections.synchronizedList(new ArrayList<MapPolygon>());

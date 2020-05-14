@@ -17,19 +17,20 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
- * A {@link TileLoader} implementation that loads tiles from OSM.
+ * A {@link TileLoader} implementation that loads tiles online sources 
+ * such as OSM.
  *
  * @author Jan Peter Stotz
  * @author Joel Kozikowski
  */
-public class OsmTileLoader extends AbstractTileLoader {
+public class MapServiceLoader extends AbstractTileLoader {
     
-    private final class OsmTileJob implements TileJob {
+    private final class MapServiceJob implements TileJob {
         private final Tile tile;
         private InputStream input;
         private boolean force;
 
-        private OsmTileJob(Tile tile) {
+        private MapServiceJob(Tile tile) {
             this.tile = tile;
         }
 
@@ -99,11 +100,11 @@ public class OsmTileLoader extends AbstractTileLoader {
 
     protected AbstractMapService mapService;
 
-    public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener) {
+    public MapServiceLoader(AbstractMapService mapService, TileLoaderListener listener) {
         this(mapService, listener, null);
     }
 
-    public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
+    public MapServiceLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
         super(listener);
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
@@ -115,7 +116,7 @@ public class OsmTileLoader extends AbstractTileLoader {
 
     @Override
     public TileJob createTileLoaderJob(final Tile tile) {
-        return new OsmTileJob(tile);
+        return new MapServiceJob(tile);
     }
 
     

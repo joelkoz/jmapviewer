@@ -166,7 +166,7 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
     
     @Override
     public TileLoader getTileLoader(TileLoaderListener listener) {
-        return new OsmTileLoader(this, listener);
+        return new MapServiceLoader(this, listener);
     }
 
 }
