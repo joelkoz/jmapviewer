@@ -81,12 +81,12 @@ public class OsmTileLoader implements TileLoader {
         }
 
         @Override
-        public void submit() {
-            submit(false);
+        public void startTileLoad() {
+            startTileLoad(false);
         }
 
         @Override
-        public void submit(boolean force) {
+        public void startTileLoad(boolean force) {
             this.force = force;
             jobDispatcher.execute(this);
         }
