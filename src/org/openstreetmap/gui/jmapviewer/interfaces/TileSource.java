@@ -63,17 +63,6 @@ public interface TileSource extends Attributed {
 
 
     /**
-     * Creates tile identifier that is unique among all tile sources, but the same tile will always
-     * get the same identifier. Used for creation of cache key.
-     *
-     * @param zoom zoom level
-     * @param tilex X coordinate
-     * @param tiley Y coordinate
-     * @return tile identifier
-     */
-    String getTileId(int zoom, int tilex, int tiley);
-
-    /**
      * Specifies how large each tile is.
      * @return The size of a single tile in pixels. -1 if default size should be used
      */

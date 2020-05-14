@@ -151,10 +151,6 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
         return ret;
     }
 
-    @Override
-    public String getTileId(int zoom, int tilex, int tiley) {
-        return this.baseUrl + "/" + zoom + "/" + tilex + "/" + tiley;
-    }
 
     @Override
     public boolean isModTileFeatures() {
