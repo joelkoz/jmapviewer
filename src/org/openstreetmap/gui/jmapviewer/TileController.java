@@ -13,6 +13,13 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
  */
 public class TileController {
 
+    /**
+     * The maximum number of errors the controller will tolerate to download a given tile from a given source.
+     * Once this limit has been reached, the controller will stop submitting load jobs for it as long as it
+     * remains in the cache.
+     */
+    public static int MAX_LOAD_ERRORS = 3;
+    
     private TileLoader tileLoader;
     private TileCache tileCache;
     private TileSource tileSource;
@@ -53,7 +60,9 @@ public class TileController {
             tile.loadPlaceholderFromCache(tileCache);
         }
         if (!tile.isLoaded()) {
-            tileLoader.createTileLoaderJob(tile).startTileLoad();
+            if (tile.getLoadErrorCount() < MAX_LOAD_ERRORS) {
+               tileLoader.createTileLoaderJob(tile).startTileLoad();
+            }
         }
         return tile;
     }

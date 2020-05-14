@@ -48,6 +48,8 @@ public class Tile {
     protected BufferedImage image;
     protected String key;
     protected String error_message;
+    
+    private int loadErrorCount = 0;
 
     /** TileLoader-specific tile metadata */
     protected Map<String, String> metadata;
@@ -379,8 +381,14 @@ public class Tile {
         error = true;
         setImage(ERROR_IMAGE);
         error_message = message;
+        loadErrorCount++;
     }
 
+    
+    public int getLoadErrorCount() {
+        return loadErrorCount;
+    }
+    
     /**
      * Puts the given key/value pair to the metadata of the tile.
      * If value is null, the (possibly existing) key/value pair is removed from
