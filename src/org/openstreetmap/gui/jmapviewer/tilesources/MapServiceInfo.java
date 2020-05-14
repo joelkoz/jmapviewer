@@ -98,24 +98,6 @@ public class MapServiceInfo {
     }
 
     /**
-     * Request header information for empty tiles for servers delivering such tile types
-     * @return map of headers, that when set, means that this is "no tile at this zoom level" situation
-     * @since 32022
-     */
-    public Map<String, Set<String>> getNoTileHeaders() {
-        return noTileHeaders;
-    }
-
-    /**
-     * Checkusm for empty tiles for servers delivering such tile types
-     * @return map of checksums, that when detected, means that this is "no tile at this zoom level" situation
-     * @since 32022
-     */
-    public Map<String, Set<String>> getNoTileChecksums() {
-        return noTileChecksums;
-    }
-
-    /**
      * Request supported minimum zoom level
      * @return minimum zoom level supported by tile source
      */

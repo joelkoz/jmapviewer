@@ -2,8 +2,6 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.awt.Point;
-import java.util.List;
-import java.util.Map;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -187,17 +185,7 @@ public interface TileSource extends Attributed {
      */
     int getTileYMin(int zoom);
 
-    /**
-     * Determines, if the returned data from TileSource represent "no tile at this zoom level" situation. Detection
-     * algorithms differ per TileSource, so each TileSource should implement each own specific way.
-     *
-     * @param headers HTTP headers from response from TileSource server
-     * @param statusCode HTTP status code
-     * @param content byte array representing the data returned from the server
-     * @return true, if "no tile at this zoom level" situation detected
-     */
-    boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
-
+    
     /**
      * Convert tile indices (x/y/zoom) into projected coordinates of the tile origin.
      * @param x x tile index

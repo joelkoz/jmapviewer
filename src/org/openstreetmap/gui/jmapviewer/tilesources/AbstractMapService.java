@@ -2,13 +2,10 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -22,8 +19,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 public abstract class AbstractMapService extends AbstractMercatorTileSource {
 
     protected String baseUrl;
-    private final Map<String, Set<String>> noTileHeaders;
-    private final Map<String, Set<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected boolean modTileFeatures;
     protected int maxZoom;
@@ -40,8 +35,6 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
         if (baseUrl != null && baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length()-1);
         }
-        this.noTileHeaders = info.getNoTileHeaders();
-        this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
         this.modTileFeatures = info.isModTileFeatures();
         this.tileSize = info.getTileSize();
@@ -88,51 +81,6 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
 
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         return this.getBaseUrl() + getTilePath(zoom, tilex, tiley);
-    }
-
-    @Override
-    public boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content) {
-        if (noTileHeaders != null && headers != null) {
-            for (Entry<String, Set<String>> searchEntry: noTileHeaders.entrySet()) {
-                List<String> headerVals = headers.get(searchEntry.getKey());
-                if (headerVals != null) {
-                    for (String headerValue: headerVals) {
-                        for (String val: searchEntry.getValue()) {
-                            if (headerValue.matches(val)) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (noTileChecksums != null && content != null) {
-            for (Entry<String, Set<String>> searchEntry: noTileChecksums.entrySet()) {
-                MessageDigest md = null;
-                try {
-                    md = MessageDigest.getInstance(searchEntry.getKey());
-                } catch (NoSuchAlgorithmException e) {
-                    break;
-                }
-                byte[] byteDigest = md.digest(content);
-                final int len = byteDigest.length;
-
-                char[] hexChars = new char[len * 2];
-                for (int i = 0, j = 0; i < len; i++) {
-                    final int v = byteDigest[i];
-                    int vn = (v & 0xf0) >> 4;
-                    hexChars[j++] = (char) (vn + (vn >= 10 ? 'a'-10 : '0'));
-                    vn = (v & 0xf);
-                    hexChars[j++] = (char) (vn + (vn >= 10 ? 'a'-10 : '0'));
-                }
-                for (String val: searchEntry.getValue()) {
-                    if (new String(hexChars).equalsIgnoreCase(val)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return super.isNoTileAtZoom(headers, statusCode, content);
     }
 
     
