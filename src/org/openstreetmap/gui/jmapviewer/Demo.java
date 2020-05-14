@@ -21,10 +21,9 @@ import javax.swing.JPanel;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialMapService;
+import org.openstreetmap.gui.jmapviewer.tilesources.OnlineMapServices;
 
 /**
  * Demonstrates the usage of {@link JMapViewer}
@@ -86,9 +85,9 @@ public class Demo extends JFrame implements JMapViewerEventListener {
             }
         });
         JComboBox<TileSource> tileSourceSelector = new JComboBox<>(new TileSource[] {
-                new OsmTileSource.Mapnik(),
-                new OsmTileSource.CycleMap(),
-                new BingAerialTileSource(),
+                new OnlineMapServices.Mapnik(),
+                new OnlineMapServices.CycleMap(),
+                new BingAerialMapService(),
         });
         tileSourceSelector.addItemListener(new ItemListener() {
             @Override
@@ -96,17 +95,7 @@ public class Demo extends JFrame implements JMapViewerEventListener {
                 map().setTileSource((TileSource) e.getItem());
             }
         });
-        JComboBox<TileLoader> tileLoaderSelector;
-        tileLoaderSelector = new JComboBox<>(new TileLoader[] {new OsmTileLoader(map())});
-        tileLoaderSelector.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                map().setTileLoader((TileLoader) e.getItem());
-            }
-        });
-        map().setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
         panelTop.add(tileSourceSelector);
-        panelTop.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map().getMapMarkersVisible());
         showMapMarker.addActionListener(new ActionListener() {

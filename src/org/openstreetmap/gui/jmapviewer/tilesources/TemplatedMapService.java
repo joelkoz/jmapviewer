@@ -28,7 +28,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
  *                                  used to specify many tile servers
  * {header:(HEADER_NAME,HEADER_VALUE)} - sets the headers to be sent to tile server
  */
-public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTileSource {
+public class TemplatedMapService extends AbstractMapService implements TemplatedTileSource {
 
     private Random rand;
     private String[] randomParts;
@@ -53,7 +53,7 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
      * Creates Templated TMS Tile Source based on ImageryInfo
      * @param info imagery info
      */
-    public TemplatedTMSTileSource(TileSourceInfo info) {
+    public TemplatedMapService(MapServiceInfo info) {
         super(info);
         String cookies = info.getCookies();
         if (cookies != null && !cookies.isEmpty()) {

@@ -41,7 +41,7 @@ import org.xml.sax.SAXException;
  * Tile source for the Bing Maps REST Imagery API.
  * @see <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx">MSDN</a>
  */
-public class BingAerialTileSource extends TMSTileSource {
+public class BingAerialMapService extends AbstractMapService {
 
     private static final String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
     private static volatile Future<List<Attribution>> attributions; // volatile is required for getAttribution(), see below.
@@ -57,15 +57,15 @@ public class BingAerialTileSource extends TMSTileSource {
     /**
      * Constructs a new {@code BingAerialTileSource}.
      */
-    public BingAerialTileSource() {
-        super(new TileSourceInfo("Bing", null, null));
+    public BingAerialMapService() {
+        super(new MapServiceInfo("Bing", null, null));
     }
 
     /**
      * Constructs a new {@code BingAerialTileSource}.
      * @param info imagery info
      */
-    public BingAerialTileSource(TileSourceInfo info) {
+    public BingAerialMapService(MapServiceInfo info) {
         super(info);
     }
 
@@ -259,7 +259,7 @@ public class BingAerialTileSource extends TMSTileSource {
     protected List<Attribution> getAttribution() {
         if (attributions == null) {
             // see http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
-            synchronized (BingAerialTileSource.class) {
+            synchronized (BingAerialMapService.class) {
                 if (attributions == null) {
                   final FutureTask<List<Attribution>> loader = new FutureTask<>(getAttributionLoaderCallable());
                   new Thread(loader, "bing-attribution-loader").start();

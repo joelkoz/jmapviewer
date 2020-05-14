@@ -1,5 +1,5 @@
 // License: GPL. For details, see Readme.txt file.
-package org.openstreetmap.gui.jmapviewer;
+package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,39 +9,41 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
- * A {@link TileLoader} implementation that loads tiles from OSM.
+ * A {@link TileLoader} implementation that loads tiles online sources 
+ * such as OSM.
  *
  * @author Jan Peter Stotz
+ * @author Joel Kozikowski
  */
-public class OsmTileLoader implements TileLoader {
-    private static final ThreadPoolExecutor jobDispatcher = (ThreadPoolExecutor) Executors.newFixedThreadPool(8);
-
-    private final class OsmTileJob implements TileJob {
+public class MapServiceLoader extends AbstractTileLoader {
+    
+    private final class MapServiceJob implements TileJob {
         private final Tile tile;
         private InputStream input;
         private boolean force;
 
-        private OsmTileJob(Tile tile) {
+        private MapServiceJob(Tile tile) {
             this.tile = tile;
         }
 
         @Override
         public void run() {
             synchronized (tile) {
+                
                 if ((tile.isLoaded() && !tile.hasError()) || tile.isLoading())
                     return;
-                tile.loaded = false;
-                tile.error = false;
-                tile.loading = true;
+                
+                tile.initLoading();
             }
+            boolean success = false;
             try {
                 URLConnection conn = loadTileFromOsm(tile);
                 if (force) {
@@ -59,32 +61,30 @@ public class OsmTileLoader implements TileLoader {
                         input = null;
                     }
                 }
-                tile.setLoaded(true);
-                listener.tileLoadingFinished(tile, true);
+                success = true;
             } catch (IOException e) {
                 tile.setError(e.getMessage());
-                listener.tileLoadingFinished(tile, false);
                 if (input == null) {
                     try {
-                        System.err.println("Failed loading " + tile.getUrl() +": "
+                        System.err.println("Failed loading " + getTileUrl(tile) +": "
                                 +e.getClass() + ": " + e.getMessage());
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
                     }
                 }
             } finally {
-                tile.loading = false;
-                tile.setLoaded(true);
+                tile.finishLoading();
+                listener.tileLoadingFinished(tile, success);
             }
         }
 
         @Override
-        public void submit() {
-            submit(false);
+        public void startTileLoad() {
+            startTileLoad(false);
         }
 
         @Override
-        public void submit(boolean force) {
+        public void startTileLoad(boolean force) {
             this.force = force;
             jobDispatcher.execute(this);
         }
@@ -98,30 +98,35 @@ public class OsmTileLoader implements TileLoader {
     public int timeoutConnect;
     public int timeoutRead;
 
-    protected TileLoaderListener listener;
+    protected AbstractMapService mapService;
 
-    public OsmTileLoader(TileLoaderListener listener) {
-        this(listener, null);
+    public MapServiceLoader(AbstractMapService mapService, TileLoaderListener listener) {
+        this(mapService, listener, null);
     }
 
-    public OsmTileLoader(TileLoaderListener listener, Map<String, String> headers) {
+    public MapServiceLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
+        super(listener);
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
         this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
         if (headers != null) {
             this.headers.putAll(headers);
         }
-        this.listener = listener;
+        this.mapService = mapService;
     }
 
     @Override
     public TileJob createTileLoaderJob(final Tile tile) {
-        return new OsmTileJob(tile);
+        return new MapServiceJob(tile);
     }
 
     
+    protected String getTileUrl(Tile tile) throws IOException {
+        return mapService.getTileUrl(tile.getZoom(), tile.getXtile(), tile.getYtile());
+    }
+    
     protected URLConnection loadTileFromOsm(Tile tile) throws IOException {
         URL url;
-        url = new URL(tile.getUrl());
+        url = new URL(getTileUrl(tile));
         URLConnection urlConn = url.openConnection();
         if (urlConn instanceof HttpURLConnection) {
             prepareHttpUrlConnection((HttpURLConnection) urlConn);
@@ -173,26 +178,10 @@ public class OsmTileLoader implements TileLoader {
             urlConn.setReadTimeout(timeoutRead);
     }
 
+    
     @Override
-    public String toString() {
-        return getClass().getSimpleName();
+    public int getMaxLoadRetries() {
+        return 2;
     }
 
-    @Override
-    public boolean hasOutstandingTasks() {
-        return jobDispatcher.getTaskCount() > jobDispatcher.getCompletedTaskCount();
-    }
-
-    @Override
-    public void cancelOutstandingTasks() {
-        jobDispatcher.getQueue().clear();
-    }
-
-    /**
-     * Sets the maximum number of concurrent connections the tile loader will do
-     * @param num number of concurrent connections
-     */
-    public static void setConcurrentConnections(int num) {
-        jobDispatcher.setMaximumPoolSize(num);
-    }
 }

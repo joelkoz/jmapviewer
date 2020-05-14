@@ -2,9 +2,6 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.awt.Point;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -17,6 +14,16 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
  */
 public interface TileSource extends Attributed {
 
+    
+    /**
+     * Returns a tile loader capable of loading tiles from this
+     * tile source
+     * @param listener A listener who should be contacted once each tile has
+     *   completed loading.
+     */
+    TileLoader getTileLoader(TileLoaderListener listener);
+    
+    
     /**
      * Specifies the maximum zoom value. The number of zoom levels is [0..
      * {@link #getMaxZoom()}].
@@ -52,27 +59,6 @@ public interface TileSource extends Attributed {
      */
     String getId();
 
-    /**
-     * Constructs the tile url.
-     *
-     * @param zoom zoom level
-     * @param tilex X coordinate
-     * @param tiley Y coordinate
-     * @return fully qualified url for downloading the specified tile image
-     * @throws IOException if any I/O error occurs
-     */
-    String getTileUrl(int zoom, int tilex, int tiley) throws IOException;
-
-    /**
-     * Creates tile identifier that is unique among all tile sources, but the same tile will always
-     * get the same identifier. Used for creation of cache key.
-     *
-     * @param zoom zoom level
-     * @param tilex X coordinate
-     * @param tiley Y coordinate
-     * @return tile identifier
-     */
-    String getTileId(int zoom, int tilex, int tiley);
 
     /**
      * Specifies how large each tile is.
@@ -199,25 +185,7 @@ public interface TileSource extends Attributed {
      */
     int getTileYMin(int zoom);
 
-    /**
-     * Determines, if the returned data from TileSource represent "no tile at this zoom level" situation. Detection
-     * algorithms differ per TileSource, so each TileSource should implement each own specific way.
-     *
-     * @param headers HTTP headers from response from TileSource server
-     * @param statusCode HTTP status code
-     * @param content byte array representing the data returned from the server
-     * @return true, if "no tile at this zoom level" situation detected
-     */
-    boolean isNoTileAtZoom(Map<String, List<String>> headers, int statusCode, byte[] content);
-
-    /**
-     * Extracts metadata about the tile based on HTTP headers
-     *
-     * @param headers HTTP headers from Tile Source server
-     * @return tile metadata
-     */
-    Map<String, String> getMetadata(Map<String, List<String>> headers);
-
+    
     /**
      * Convert tile indices (x/y/zoom) into projected coordinates of the tile origin.
      * @param x x tile index

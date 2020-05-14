@@ -8,12 +8,12 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 /**
  * OSM Tile source.
  */
-public class OsmTileSource {
+public class OnlineMapServices {
 
     /**
      * The default "Mapnik" OSM tile source.
      */
-    public static class Mapnik extends AbstractOsmTileSource {
+    public static class Mapnik extends AbstractOsmMapService {
 
         private static final String PATTERN = "https://%s.tile.openstreetmap.org";
 
@@ -40,7 +40,7 @@ public class OsmTileSource {
     /**
      * The "Cycle Map" OSM tile source.
      */
-    public static class CycleMap extends AbstractOsmTileSource {
+    public static class CycleMap extends AbstractOsmMapService {
 
         private static final String PATTERN = "http://%s.tile.opencyclemap.org/cycle";
 
@@ -73,7 +73,7 @@ public class OsmTileSource {
      *
      * Template for thunderforest.com.
      */
-    public abstract static class TransportMap extends AbstractOsmTileSource {
+    public abstract static class TransportMap extends AbstractOsmMapService {
 
         private static final String PATTERN = "https://%s.tile.thunderforest.com/transport";
 

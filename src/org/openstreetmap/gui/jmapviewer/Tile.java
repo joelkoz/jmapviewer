@@ -35,16 +35,21 @@ public class Tile {
      */
     public static final BufferedImage ERROR_IMAGE = loadImage("images/error.png");
 
+    
+    // field accessed by multiple threads without any monitors, needs to be volatile
+    private volatile boolean loaded; 
+    private volatile boolean loading;
+    private volatile boolean error;
+    
     protected TileSource source;
     protected int xtile;
     protected int ytile;
     protected int zoom;
     protected BufferedImage image;
     protected String key;
-    protected volatile boolean loaded; // field accessed by multiple threads without any monitors, needs to be volatile
-    protected volatile boolean loading;
-    protected volatile boolean error;
     protected String error_message;
+    
+    private int loadErrorCount = 0;
 
     /** TileLoader-specific tile metadata */
     protected Map<String, String> metadata;
@@ -266,10 +271,7 @@ public class Tile {
         this.loaded = loaded;
     }
 
-    public String getUrl() throws IOException {
-        return source.getTileUrl(zoom, xtile, ytile);
-    }
-
+    
     /**
      * Paints the tile-image on the {@link Graphics} <code>g</code> at the
      * position <code>x</code>/<code>y</code>.
@@ -350,7 +352,7 @@ public class Tile {
     }
 
     public static String getTileKey(TileSource source, int xtile, int ytile, int zoom) {
-        return zoom + "/" + xtile + "/" + ytile + "@" + source.getName();
+        return zoom + "/" + xtile + "/" + ytile + "@" + source.getId();
     }
 
     public String getStatus() {
@@ -379,8 +381,14 @@ public class Tile {
         error = true;
         setImage(ERROR_IMAGE);
         error_message = message;
+        loadErrorCount++;
     }
 
+    
+    public int getLoadErrorCount() {
+        return loadErrorCount;
+    }
+    
     /**
      * Puts the given key/value pair to the metadata of the tile.
      * If value is null, the (possibly existing) key/value pair is removed from
@@ -429,6 +437,7 @@ public class Tile {
      */
     public void initLoading() {
         error = false;
+        loaded = false;        
         loading = true;
     }
 
@@ -440,6 +449,7 @@ public class Tile {
         loaded = true;
     }
 
+    
     /**
      *
      * @return TileSource from which this tile comes

@@ -123,6 +123,7 @@ public class MemoryTileCache implements TileCache {
      * Linked list element holding the {@link Tile} and links to the
      * {@link #next} and {@link #prev} item in the list.
      */
+    @SuppressWarnings("javadoc")
     protected static class CacheEntry {
         private Tile tile;
         private CacheEntry next;

@@ -1,4 +1,3 @@
-// License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Point;
@@ -13,40 +12,90 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 
 /**
- * TMS tile source.
+ * @author Wiktor Niesiobędzki
+ * @author Joel Kozikowski
  */
-public class TMSTileSource extends AbstractTMSTileSource {
+public abstract class AbstractMercatorTileSource extends AbstractTileSource {
 
-    protected int maxZoom;
-    protected int minZoom;
     protected OsmMercator osmMercator;
+    protected int tileSize;
 
-    /**
-     * Constructs a new {@code TMSTileSource}.
-     * @param info tile source information
-     */
-    public TMSTileSource(TileSourceInfo info) {
-        super(info);
-        minZoom = info.getMinZoom();
-        maxZoom = info.getMaxZoom();
+    
+    public AbstractMercatorTileSource(String name, String id) {
+        this(name, id, 0);
+    }    
+    
+    
+    public AbstractMercatorTileSource(String name, String id, int tileSize) {
+        super(name, id);
+        this.tileSize = tileSize;
         this.osmMercator = new OsmMercator(this.getTileSize());
     }
 
     @Override
+    public int getMaxZoom() {
+        return 21;
+    }
+
+    
+    @Override
     public int getMinZoom() {
-        return (minZoom == 0) ? super.getMinZoom() : minZoom;
+        return 0;
+    }
+
+
+    /**
+     * @return default tile size to use, when not set in Imagery Preferences
+     */
+    @Override
+    public int getDefaultTileSize() {
+        return OsmMercator.DEFAUL_TILE_SIZE;
+    }
+
+    
+    /*
+     * Unless an explicit tile size was passed in, use the default size...
+     */
+    @Override
+    public int getTileSize() {
+        if (tileSize <= 0) {
+            return getDefaultTileSize();
+        }
+        return tileSize;
+    }
+  
+    @Override
+    public int getTileXMax(int zoom) {
+        return getTileMax(zoom);
     }
 
     @Override
-    public int getMaxZoom() {
-        return (maxZoom == 0) ? super.getMaxZoom() : maxZoom;
+    public int getTileXMin(int zoom) {
+        return 0;
     }
 
+    @Override
+    public int getTileYMax(int zoom) {
+        return getTileMax(zoom);
+    }
+
+    @Override
+    public int getTileYMin(int zoom) {
+        return 0;
+    }
+
+    
+    protected static int getTileMax(int zoom) {
+        return (int) Math.pow(2.0, zoom) - 1;
+    }
+
+        
     @Override
     public double getDistance(double lat1, double lon1, double lat2, double lon2) {
         return osmMercator.getDistance(lat1, lon1, lat2, lon2);
     }
 
+    
     @Override
     public Point latLonToXY(double lat, double lon, int zoom) {
         return new Point(
@@ -55,6 +104,7 @@ public class TMSTileSource extends AbstractTMSTileSource {
                 );
     }
 
+    
     @Override
     public ICoordinate xyToLatLon(int x, int y, int zoom) {
         return new Coordinate(
@@ -92,7 +142,8 @@ public class TMSTileSource extends AbstractTMSTileSource {
         double f = mercatorWidth * getTileSize() / osmMercator.getMaxPixels(zoom);
         return new TileXY((p.getEast() + mercatorWidth / 2) / f, (-p.getNorth() + mercatorWidth / 2) / f);
     }
-
+    
+    
     @Override
     public boolean isInside(Tile inner, Tile outer) {
         int dz = inner.getZoom() - outer.getZoom();
@@ -101,6 +152,7 @@ public class TMSTileSource extends AbstractTMSTileSource {
                 outer.getYtile() == inner.getYtile() >> dz;
     }
 
+    
     @Override
     public TileRange getCoveringTileRange(Tile tile, int newZoom) {
         if (newZoom <= tile.getZoom()) {
@@ -114,9 +166,11 @@ public class TMSTileSource extends AbstractTMSTileSource {
             return new TileRange(t1, t2, newZoom);
         }
     }
-
+    
+    
     @Override
     public String getServerCRS() {
         return "EPSG:3857";
     }
+    
 }

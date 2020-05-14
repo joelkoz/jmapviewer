@@ -6,15 +6,27 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
-public class TileController {
-    protected TileLoader tileLoader;
-    protected TileCache tileCache;
-    protected TileSource tileSource;
 
-    public TileController(TileSource source, TileCache tileCache, TileLoaderListener listener) {
-        this.tileSource = source;
-        this.tileLoader = new OsmTileLoader(listener);
+/**
+ * A TileController manages the loading of individual tiles from a tile
+ * source, coordinating between the tile loader and tile cache.
+ */
+public class TileController {
+
+    private TileLoader tileLoader;
+    private TileCache tileCache;
+    private TileSource tileSource;
+    TileLoaderListener listener;
+    
+    
+    /**
+     * @param tileSource The initial source to load tiles from
+     * @param listener The listener to be notified when tiles have been loaded.
+     */
+    public TileController(TileSource tileSource, TileCache tileCache, TileLoaderListener listener) {
+        this.listener = listener;
         this.tileCache = tileCache;
+        this.setTileSource(tileSource);
     }
 
     /**
@@ -37,11 +49,13 @@ public class TileController {
             tileCache.addTile(tile);
             tile.loadPlaceholderFromCache(tileCache);
         }
-        if (tile.error) {
+        if (tile.hasError()) {
             tile.loadPlaceholderFromCache(tileCache);
         }
         if (!tile.isLoaded()) {
-            tileLoader.createTileLoaderJob(tile).submit();
+            if (tile.getLoadErrorCount() <= tileLoader.getMaxLoadRetries()) {
+               tileLoader.createTileLoaderJob(tile).startTileLoad();
+            }
         }
         return tile;
     }
@@ -53,30 +67,20 @@ public class TileController {
     public void setTileCache(TileCache tileCache) {
         this.tileCache = tileCache;
     }
-
-    public TileLoader getTileLoader() {
-        return tileLoader;
-    }
-
-    public void setTileLoader(TileLoader tileLoader) {
-        this.tileLoader = tileLoader;
-    }
-
-    public TileSource getTileLayerSource() {
-        return tileSource;
-    }
-
+    
     public TileSource getTileSource() {
         return tileSource;
     }
 
     public void setTileSource(TileSource tileSource) {
         this.tileSource = tileSource;
+        this.tileLoader = tileSource.getTileLoader(this.listener);
     }
 
+    
     /**
-     * Removes all jobs from the queue that are currently not being processed.
-     *
+     * Removes all jobs from the queue that are currently not being processed by
+     * the tile loader (if any).
      */
     public void cancelOutstandingJobs() {
         tileLoader.cancelOutstandingTasks();

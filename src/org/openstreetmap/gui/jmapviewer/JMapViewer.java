@@ -30,10 +30,9 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
-import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
+import org.openstreetmap.gui.jmapviewer.tilesources.OnlineMapServices;
 
 /**
  * Provides a simple panel that displays pre-rendered map tiles loaded from the
@@ -116,28 +115,16 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * retrieving the tiles.
      */
     public JMapViewer() {
-        this(new MemoryTileCache());
-        new DefaultMapController(this);
+        this(new MemoryTileCache(), true);
     }
 
+    
     /**
      * Creates a new {@link JMapViewer} instance.
-     * @param tileCache The cache where to store tiles
-     * @param downloadThreadCount not used anymore
-     * @deprecated use {@link #JMapViewer(TileCache)}
      */
-    @Deprecated
-    public JMapViewer(TileCache tileCache, int downloadThreadCount) {
-        this(tileCache);
-    }
-
-    /**
-     * Creates a new {@link JMapViewer} instance.
-     * @param tileCache The cache where to store tiles
-     *
-     */
-    public JMapViewer(TileCache tileCache) {
-        tileSource = new OsmTileSource.Mapnik();
+    @SuppressWarnings("unused")
+    public JMapViewer(TileCache tileCache, boolean useDefaultMapController) {
+        tileSource = new OnlineMapServices.Mapnik();
         tileController = new TileController(tileSource, tileCache, this);
         mapMarkerList = Collections.synchronizedList(new ArrayList<MapMarker>());
         mapPolygonList = Collections.synchronizedList(new ArrayList<MapPolygon>());
@@ -151,6 +138,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setMinimumSize(new Dimension(tileSource.getTileSize(), tileSource.getTileSize()));
         setPreferredSize(new Dimension(400, 400));
         setDisplayPosition(new Coordinate(50, 9), 3);
+        if (useDefaultMapController) {
+            // Creating a map controller results in references from mouse
+            // listeners back to this control being created. Those references
+            // hold references to the controller allocated below. Thus, while
+            // this appears to create an unused reference, it does not.
+            new DefaultMapController(this);
+        }
     }
 
     @Override
@@ -1224,23 +1218,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         return tileController;
     }
 
-    /**
-     * Return tile information caching class
-     * @return tile cache
-     * @see TileController#getTileCache()
-     */
-    public TileCache getTileCache() {
-        return tileController.getTileCache();
-    }
-
-    /**
-     * Sets the tile loader.
-     * @param loader tile loader
-     */
-    public void setTileLoader(TileLoader loader) {
-        tileController.setTileLoader(loader);
-    }
-
+    
     /**
      * Returns attribution.
      * @return attribution
