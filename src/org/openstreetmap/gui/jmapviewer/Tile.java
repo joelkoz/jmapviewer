@@ -266,10 +266,7 @@ public class Tile {
         this.loaded = loaded;
     }
 
-    public String getUrl() throws IOException {
-        return source.getTileUrl(zoom, xtile, ytile);
-    }
-
+    
     /**
      * Paints the tile-image on the {@link Graphics} <code>g</code> at the
      * position <code>x</code>/<code>y</code>.

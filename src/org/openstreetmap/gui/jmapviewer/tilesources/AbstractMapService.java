@@ -87,7 +87,6 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
         return this.baseUrl;
     }
 
-    @Override
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         return this.getBaseUrl() + getTilePath(zoom, tilex, tiley);
     }
@@ -166,7 +165,7 @@ public abstract class AbstractMapService extends AbstractMercatorTileSource {
     
     @Override
     public TileLoader getTileLoader(TileLoaderListener listener) {
-        return new OsmTileLoader(listener);
+        return new OsmTileLoader(this, listener);
     }
 
 }

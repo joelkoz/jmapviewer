@@ -2,7 +2,6 @@
 package org.openstreetmap.gui.jmapviewer.interfaces;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -62,16 +61,6 @@ public interface TileSource extends Attributed {
      */
     String getId();
 
-    /**
-     * Constructs the tile url.
-     *
-     * @param zoom zoom level
-     * @param tilex X coordinate
-     * @param tiley Y coordinate
-     * @return fully qualified url for downloading the specified tile image
-     * @throws IOException if any I/O error occurs
-     */
-    String getTileUrl(int zoom, int tilex, int tiley) throws IOException;
 
     /**
      * Creates tile identifier that is unique among all tile sources, but the same tile will always

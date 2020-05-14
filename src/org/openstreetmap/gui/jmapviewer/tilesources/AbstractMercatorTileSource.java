@@ -11,6 +11,10 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 
+/**
+ * @author Wiktor Niesiobędzki
+ * @author Joel Kozikowski
+ */
 public abstract class AbstractMercatorTileSource extends AbstractTileSource {
 
     protected OsmMercator osmMercator;

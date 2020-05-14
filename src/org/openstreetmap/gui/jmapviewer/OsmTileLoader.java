@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
+import org.openstreetmap.gui.jmapviewer.tilesources.AbstractMapService;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM.
@@ -66,7 +67,7 @@ public class OsmTileLoader implements TileLoader {
                 listener.tileLoadingFinished(tile, false);
                 if (input == null) {
                     try {
-                        System.err.println("Failed loading " + tile.getUrl() +": "
+                        System.err.println("Failed loading " + getTileUrl(tile) +": "
                                 +e.getClass() + ": " + e.getMessage());
                     } catch (IOException ioe) {
                         ioe.printStackTrace();
@@ -99,8 +100,9 @@ public class OsmTileLoader implements TileLoader {
     public int timeoutRead;
 
     protected TileLoaderListener listener;
+    protected AbstractMapService mapService;
 
-    public OsmTileLoader(TileLoaderListener listener) {
+    public OsmTileLoader(AbstractMapService mapService, TileLoaderListener listener) {
         this(listener, null);
     }
 
@@ -119,9 +121,13 @@ public class OsmTileLoader implements TileLoader {
     }
 
     
+    protected String getTileUrl(Tile tile) throws IOException {
+        return mapService.getTileUrl(tile.getZoom(), tile.getXtile(), tile.getYtile());
+    }
+    
     protected URLConnection loadTileFromOsm(Tile tile) throws IOException {
         URL url;
-        url = new URL(tile.getUrl());
+        url = new URL(getTileUrl(tile));
         URLConnection urlConn = url.openConnection();
         if (urlConn instanceof HttpURLConnection) {
             prepareHttpUrlConnection((HttpURLConnection) urlConn);
