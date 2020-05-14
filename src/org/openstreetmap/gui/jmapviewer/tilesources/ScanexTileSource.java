@@ -22,6 +22,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
  *
  * TODO: correct getDistance() method.
  */
+@SuppressWarnings("deprecation")
 public class ScanexTileSource extends TMSTileSource {
     private static final String DEFAULT_URL = "http://maps.kosmosnimki.ru";
     private static final int DEFAULT_MAXZOOM = 14;

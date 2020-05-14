@@ -17,6 +17,23 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
  */
 public interface TileSource extends Attributed {
 
+    
+    /**
+     * Returns a tile loader capable of loading tiles from this
+     * tile source
+     * @param listener A listener who should be contacted once each tile has
+     *   completed loading.
+     */
+    TileLoader getTileLoader(TileLoaderListener listener);
+    
+    
+    /**
+     * Returns a tile cache capable of managing tiles loaded at least once
+     * from the tile loader.
+     */
+    TileCache getTileCache();
+    
+    
     /**
      * Specifies the maximum zoom value. The number of zoom levels is [0..
      * {@link #getMaxZoom()}].

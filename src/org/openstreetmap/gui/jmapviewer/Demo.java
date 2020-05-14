@@ -96,17 +96,7 @@ public class Demo extends JFrame implements JMapViewerEventListener {
                 map().setTileSource((TileSource) e.getItem());
             }
         });
-        JComboBox<TileLoader> tileLoaderSelector;
-        tileLoaderSelector = new JComboBox<>(new TileLoader[] {new OsmTileLoader(map())});
-        tileLoaderSelector.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                map().setTileLoader((TileLoader) e.getItem());
-            }
-        });
-        map().setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
         panelTop.add(tileSourceSelector);
-        panelTop.add(tileLoaderSelector);
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(map().getMapMarkersVisible());
         showMapMarker.addActionListener(new ActionListener() {

@@ -8,6 +8,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 /**
  * Abstract class for OSM Tile sources
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractOsmTileSource extends TMSTileSource {
 
     /**

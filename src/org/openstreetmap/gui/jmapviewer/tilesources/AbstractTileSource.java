@@ -2,13 +2,19 @@
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 
 public abstract class AbstractTileSource implements TileSource {
+
+    protected String name;
+    protected String id;
 
     protected String attributionText;
     protected String attributionLinkURL;
@@ -16,6 +22,30 @@ public abstract class AbstractTileSource implements TileSource {
     protected String attributionImageURL;
     protected String termsOfUseText;
     protected String termsOfUseURL;
+
+    
+    public AbstractTileSource(String name, String id) {
+        this.name = name;
+        this.id = id;
+    }
+    
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 
     @Override
     public boolean requiresAttribution() {
@@ -82,4 +112,30 @@ public abstract class AbstractTileSource implements TileSource {
         // default handler - when HTTP 404 is returned, then treat this situation as no tile at this zoom level
         return statusCode == 404;
     }
+    
+    @Override
+    public Point latLonToXY(ICoordinate point, int zoom) {
+        return latLonToXY(point.getLat(), point.getLon(), zoom);
+    }
+
+    @Override
+    public ICoordinate xyToLatLon(Point point, int zoom) {
+        return xyToLatLon(point.x, point.y, zoom);
+    }
+
+    @Override
+    public TileXY latLonToTileXY(ICoordinate point, int zoom) {
+        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
+    }
+
+    @Override
+    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
+        return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
+    }
+
+    @Override
+    public ICoordinate tileXYToLatLon(Tile tile) {
+        return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
+    }
+    
 }

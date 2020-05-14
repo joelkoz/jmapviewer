@@ -1,7 +1,6 @@
 // License: GPL. For details, see Readme.txt file.
 package org.openstreetmap.gui.jmapviewer.tilesources;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -11,10 +10,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.gui.jmapviewer.OsmMercator;
-import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.TileXY;
-import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
+import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 
 /**
  * Class generalizing all tile based tile sources
@@ -22,63 +22,47 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
  * @author Wiktor Niesiobędzki
  *
  */
-public abstract class AbstractTMSTileSource extends AbstractTileSource {
+public abstract class AbstractOnlineTMSTileSource extends AbstractMercatorTileSource {
 
-    protected String name;
     protected String baseUrl;
-    protected String id;
     private final Map<String, Set<String>> noTileHeaders;
     private final Map<String, Set<String>> noTileChecksums;
     private final Map<String, String> metadataHeaders;
     protected boolean modTileFeatures;
-    protected int tileSize;
+    protected int maxZoom;
+    protected int minZoom;
 
     /**
      * Creates an instance based on TileSource information
      *
      * @param info description of the Tile Source
      */
-    public AbstractTMSTileSource(TileSourceInfo info) {
-        this.name = info.getName();
+    public AbstractOnlineTMSTileSource(TileSourceInfo info) {
+        super(info.getName(), info.getUrl());
         this.baseUrl = info.getUrl();
         if (baseUrl != null && baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.length()-1);
         }
-        this.id = info.getUrl();
         this.noTileHeaders = info.getNoTileHeaders();
         this.noTileChecksums = info.getNoTileChecksums();
         this.metadataHeaders = info.getMetadataHeaders();
         this.modTileFeatures = info.isModTileFeatures();
         this.tileSize = info.getTileSize();
+        minZoom = info.getMinZoom();
+        maxZoom = info.getMaxZoom();
     }
 
-    /**
-     * @return default tile size to use, when not set in Imagery Preferences
-     */
+    
     @Override
-    public int getDefaultTileSize() {
-        return OsmMercator.DEFAUL_TILE_SIZE;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getId() {
-        return id;
+    public int getMinZoom() {
+        return (minZoom == 0) ? super.getMinZoom() : minZoom;
     }
 
     @Override
     public int getMaxZoom() {
-        return 21;
+        return (maxZoom == 0) ? super.getMaxZoom() : maxZoom;
     }
-
-    @Override
-    public int getMinZoom() {
-        return 0;
-    }
+    
 
     /**
      * @return image extension, used for URL creation
@@ -108,67 +92,6 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) throws IOException {
         return this.getBaseUrl() + getTilePath(zoom, tilex, tiley);
-    }
-
-    @Override
-    public String toString() {
-        return getName();
-    }
-
-    /*
-     * Most tilesources use OsmMercator projection.
-     */
-    @Override
-    public int getTileSize() {
-        if (tileSize <= 0) {
-            return getDefaultTileSize();
-        }
-        return tileSize;
-    }
-
-    @Override
-    public Point latLonToXY(ICoordinate point, int zoom) {
-        return latLonToXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
-    public ICoordinate xyToLatLon(Point point, int zoom) {
-        return xyToLatLon(point.x, point.y, zoom);
-    }
-
-    @Override
-    public TileXY latLonToTileXY(ICoordinate point, int zoom) {
-        return latLonToTileXY(point.getLat(), point.getLon(), zoom);
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(TileXY xy, int zoom) {
-        return tileXYToLatLon(xy.getXIndex(), xy.getYIndex(), zoom);
-    }
-
-    @Override
-    public ICoordinate tileXYToLatLon(Tile tile) {
-        return tileXYToLatLon(tile.getXtile(), tile.getYtile(), tile.getZoom());
-    }
-
-    @Override
-    public int getTileXMax(int zoom) {
-        return getTileMax(zoom);
-    }
-
-    @Override
-    public int getTileXMin(int zoom) {
-        return 0;
-    }
-
-    @Override
-    public int getTileYMax(int zoom) {
-        return getTileMax(zoom);
-    }
-
-    @Override
-    public int getTileYMin(int zoom) {
-        return 0;
     }
 
     @Override
@@ -241,8 +164,16 @@ public abstract class AbstractTMSTileSource extends AbstractTileSource {
     public boolean isModTileFeatures() {
         return modTileFeatures;
     }
-
-    private static int getTileMax(int zoom) {
-        return (int) Math.pow(2.0, zoom) - 1;
+ 
+    
+    @Override
+    public TileLoader getTileLoader(TileLoaderListener listener) {
+        return new OsmTileLoader(listener);
     }
+
+    @Override
+    public TileCache getTileCache() {
+        return new MemoryTileCache();
+    }
+    
 }

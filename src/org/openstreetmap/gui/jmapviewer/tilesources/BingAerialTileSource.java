@@ -41,6 +41,7 @@ import org.xml.sax.SAXException;
  * Tile source for the Bing Maps REST Imagery API.
  * @see <a href="https://msdn.microsoft.com/en-us/library/ff701724.aspx">MSDN</a>
  */
+@SuppressWarnings("deprecation")
 public class BingAerialTileSource extends TMSTileSource {
 
     private static final String API_KEY = "Arzdiw4nlOJzRwOz__qailc8NiR31Tt51dN2D7cm57NrnceZnCpgOkmJhNpGoppU";
