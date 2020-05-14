@@ -350,7 +350,7 @@ public class Tile {
     }
 
     public static String getTileKey(TileSource source, int xtile, int ytile, int zoom) {
-        return zoom + "/" + xtile + "/" + ytile + "@" + source.getName();
+        return zoom + "/" + xtile + "/" + ytile + "@" + source.getId();
     }
 
     public String getStatus() {
