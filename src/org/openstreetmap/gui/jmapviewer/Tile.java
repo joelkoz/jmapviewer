@@ -35,15 +35,18 @@ public class Tile {
      */
     public static final BufferedImage ERROR_IMAGE = loadImage("images/error.png");
 
+    
+    // field accessed by multiple threads without any monitors, needs to be volatile
+    public volatile boolean loaded; 
+    public volatile boolean loading;
+    public volatile boolean error;
+    
     protected TileSource source;
     protected int xtile;
     protected int ytile;
     protected int zoom;
     protected BufferedImage image;
     protected String key;
-    protected volatile boolean loaded; // field accessed by multiple threads without any monitors, needs to be volatile
-    protected volatile boolean loading;
-    protected volatile boolean error;
     protected String error_message;
 
     /** TileLoader-specific tile metadata */

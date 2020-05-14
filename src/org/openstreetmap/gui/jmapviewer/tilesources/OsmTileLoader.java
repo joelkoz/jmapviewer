@@ -1,5 +1,5 @@
 // License: GPL. For details, see Readme.txt file.
-package org.openstreetmap.gui.jmapviewer;
+package org.openstreetmap.gui.jmapviewer.tilesources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +12,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.gui.jmapviewer.tilesources.AbstractMapService;
 
 /**
  * A {@link TileLoader} implementation that loads tiles from OSM.
