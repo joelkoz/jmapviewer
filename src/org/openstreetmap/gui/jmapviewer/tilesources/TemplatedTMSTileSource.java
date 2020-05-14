@@ -28,8 +28,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
  *                                  used to specify many tile servers
  * {header:(HEADER_NAME,HEADER_VALUE)} - sets the headers to be sent to tile server
  */
-@SuppressWarnings("deprecation")
-public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTileSource {
+public class TemplatedTMSTileSource extends AbstractOnlineTMSTileSource implements TemplatedTileSource {
 
     private Random rand;
     private String[] randomParts;
