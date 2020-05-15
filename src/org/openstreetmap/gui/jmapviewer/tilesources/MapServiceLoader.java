@@ -107,7 +107,7 @@ public class MapServiceLoader extends AbstractTileLoader {
     public MapServiceLoader(AbstractMapService mapService, TileLoaderListener listener, Map<String, String> headers) {
         super(listener);
         this.headers.put("Accept", "text/html, image/png, image/jpeg, image/gif, */*");
-        this.headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)");
+        this.headers.put("user-agent", "JMapViewer/2.0 (" + System.getProperty("java.version") + ")");
         if (headers != null) {
             this.headers.putAll(headers);
         }
