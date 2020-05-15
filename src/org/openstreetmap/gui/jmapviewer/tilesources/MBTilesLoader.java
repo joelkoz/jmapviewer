@@ -50,13 +50,22 @@ public class MBTilesLoader extends AbstractTileLoader {
                if (flipYCoordinate) {
                   y = (1 << z) - y - 1;
                }
-               org.imintel.mbtiles4j.Tile mbTile = mbt.getTile(z, x, y);
+               org.imintel.mbtiles4j.Tile mbTile = null;
+               try {
+                  mbTile = mbt.getTile(z, x, y);
+               }
+               catch (Exception ex) {
+                  if (getRootCause(ex).getMessage().indexOf("ResultSet closed") > 0) {
+                      throw ex;
+                  }
+               }
                if (mbTile != null) {
                    jmvTile.loadImage(mbTile.getData());
                    success = true;
                }
                else {
-                   throw new Exception("Tile source does not contain tile for " + jmvTile.getZoom() + "/" + jmvTile.getXtile() + "/" + jmvTile.getYtile());
+                   jmvTile.setError(jmvTile.getKey() + " not found in MBTile database");
+                   System.err.println(jmvTile.getErrorMessage());
                }
             } catch (Exception e) {
                 jmvTile.setError(e.getMessage());
@@ -114,5 +123,13 @@ public class MBTilesLoader extends AbstractTileLoader {
         return 0;
     }
 
-
+    
+    public static Throwable getRootCause(Throwable throwable) {
+        Throwable rootCause = throwable;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+        return rootCause;        
+    }
+    
 }
